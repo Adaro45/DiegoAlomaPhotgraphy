@@ -1,0 +1,173 @@
+/* Contenedor principal: usamos flex para poder animar el cambio de ancho */
+.portfolio-layout {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  min-height: 100vh;
+  position: relative;
+  transition: all 0.3s ease;
+}
+/* Aside de filtros (sticky y animado) */
+.portfolio-filter-section {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  position: sticky;
+  top: 3.5rem;
+  overflow-y: auto;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Cuando el aside está visible */
+.portfolio-layout.portfolio-aside-visible .portfolio-filter-section {
+  height: max-content;
+  width: 250px;
+  opacity: 1;
+}
+
+/* Cuando se oculta el aside: se anima a 0 de ancho y se oculta */
+.portfolio-layout:not(.portfolio-aside-visible) .portfolio-filter-section {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  border: none;
+}
+
+/* La sección de galería se expande automáticamente */
+.portfolio-gallery-section {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+/* Botón para togglear el aside */
+.portfolio-toggle-aside-button {
+  position: fixed;
+  top: 10px;
+  left: 40px;
+  z-index: 1100000;
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.portfolio-toggle-aside-button svg{
+  width: 50px;
+  height: 50px;
+}
+.portfolio-toggle-aside-button:hover {
+  transform: scale(1.1);
+}
+
+/* Lista de categorías */
+.portfolio-category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.portfolio-category-item {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.portfolio-category-item:hover {
+  background-color: #e0e0e0;
+}
+
+.portfolio-category-item.active {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Sección de galería */
+.portfolio-gallery-section {
+  /* Ocupa todo el espacio disponible */
+  width: 100%;
+}
+
+/* Galería en grid (estilo masonry) */
+.portfolio-gallery-grid {
+  display: flex;
+  gap: 15px;
+}
+
+.portfolio-gallery-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.portfolio-gallery-item {
+  width: 100%;
+  break-inside: avoid;
+}
+
+.portfolio-gallery-item img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  object-fit: cover;
+}
+
+.portfolio-gallery-item img:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+  .portfolio-layout {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  .portfolio-filter-section {
+    display: none;
+  }
+  .portfolio-gallery-section {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  /* Para la galería móvil, se usan columnas con flex-wrap */
+  .portfolio-gallery-grid {
+    flex-wrap: wrap;
+  }
+  .portfolio-gallery-column {
+    width: 48%;
+  }
+  /* Selector personalizado sticky para móvil */
+  .portfolio-mobile-category-selector-container {
+    position: sticky;
+    top: 80px;
+    z-index: 999;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    margin-bottom: 10px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  .portfolio-mobile-category-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .portfolio-mobile-category-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  .portfolio-mobile-category-item.active {
+    background-color: #333;
+    color: #fff;
+  }
+}

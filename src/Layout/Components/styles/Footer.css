@@ -1,0 +1,78 @@
+
+.footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem 0 2rem;
+    height: 150px;
+    margin-top: 4rem;
+    background-color: #6C757D;  /* Fondo oscuro para el footer */
+    color: white;  /* Color de texto blanco */
+    text-align: center;  /* Centrar el texto */
+    font-size: 14px;  /* Tamaño de fuente más pequeño */
+  }
+  .footer p {
+    margin: 0;  /* Eliminar márgenes */
+    font-size: 16px;  /* Ajustar tamaño de texto para derechos reservados */
+  }
+  .social-media-footer {
+    margin-top: 15px;
+  }
+  .social-media-footer a {
+    margin: 0 10px;  /* Espacio entre los iconos */
+  }
+  .social-media-footer .icon {
+    width: 30px;  /* Tamaño de los iconos */
+    height: 30px;  /* Mantener el tamaño proporcional */
+    margin-bottom: 20px;
+    transition: transform 0.3s ease; 
+    filter: invert(1) brightness(100%) grayscale(100%); 
+  }
+  .social-media-footer .icon:hover {
+    transform: scale(1.1);  /* Aumentar el tamaño del icono al pasar el mouse */
+  }
+  
+  .social-media-footer a:active .icon {
+    transform: scale(0.95);  /* Reducir ligeramente el icono al hacer clic */
+  }
+  .logo-footer {
+    margin-top: 15px;  /* Separación entre el texto y el logo */
+    width: 200px;  /* Tamaño del logo */
+    height: auto;  /* Mantener el aspecto del logo */
+  }
+  .contact-mail {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  }
+  .contact-mail a {
+    margin-top: auto;
+    margin-bottom: auto;  
+    font-size: 16px; 
+    text-decoration: none; 
+    color: white;
+  }
+  .contact-mail a:hover {
+    text-decoration: underline; 
+  }
+  .contact-mail a:active {
+    color: #FFC107;
+  }
+  .icon-email{
+    width: 30px;
+    height: auto;
+    filter: invert(1) brightness(100%) grayscale(100%);
+  }
+  @media (max-width: 768px) {
+    .footer {
+      flex-direction: column;
+      height: auto;
+      padding: 2rem 1rem;
+      gap: 1rem;
+    }
+    .logo-footer {
+      width: 200px;
+    }
+  }

@@ -1,0 +1,117 @@
+.gallery-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  padding-top: 50px;
+  width: 100%;
+}
+
+.title-container-bodas {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.line-bodas {
+  width: 80%;
+  height: 2px;
+  background-color: #212529;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.title-bodas {
+  font-size: 36px;
+}
+
+/* Slideshow para ambas vistas */
+.gallery-slider {
+  position: relative;
+  width: 100%;
+  max-width: 90vw;
+  height: 600px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+
+}
+
+.gallery-slide {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: opacity 2s ease-in-out;
+}
+
+/* Botones de navegación */
+.gallery-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  font-size: 2rem;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+  color: #2da8d6;
+}
+
+.gallery-button.prev {
+  left: 10px;
+}
+
+.gallery-button.next {
+  right: 10px;
+}
+
+/* Texto siempre visible */
+.gallery-text {
+  max-width: 700px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.5;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.gallery-paragraph {
+  font-family: 'Inter', sans-serif;
+  color: #212529;
+}
+
+.gallery-text h2 {
+  font-size: 30px;
+  color: #212529;
+}
+
+.button-gallery {
+  width: fit-content;
+  margin: auto;
+  margin-top: 2rem !important;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media screen and (max-width: 768px) {
+  .title-bodas {
+    font-size: 15px;
+  }
+  .gallery-slider {
+    height: 400px;
+  }
+  .gallery-text {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+}

@@ -1,0 +1,132 @@
+.title-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  }
+  .title {
+  width: 30%;
+  font-size: 36px;
+}
+.line{
+  width: 70%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 2px;
+  background-color: #212529;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.About-Me {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  padding-top: 50px;
+  margin: 1rem;
+}
+
+/* Contenedor de la imagen y el texto */
+.about-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  width: 110%;
+  max-width: 1100px;
+  padding: 1rem;
+}
+
+/* Imagen */
+.image-me-container {
+  text-align: center;
+}
+
+.image-me {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 0 !important;
+}
+
+/* Contenedor del texto */
+.paragraph-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Párrafos */
+.paragraph {
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align:justify;
+}
+
+/* Redes sociales */
+.Social-media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+.Social-media_item{
+  display: flex;
+  gap: 1rem;
+}
+.Social-media_item a{
+  text-decoration: none;
+  
+}
+.icon {
+  height: 20px;
+  width: auto;
+}
+
+/* Botón */
+.button {
+  margin-top: 10px;
+}
+
+/* 🔹 Estilos para MÓVIL */
+@media (max-width: 768px) {
+  .title{
+    font-size: 15px;
+  }
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  /* Imagen más pequeña en móviles */
+  .image-me {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Texto ocupa todo el ancho */
+  .paragraph-container {
+    width: 100%;
+    padding: 0 1rem;
+  }
+  .paragraph{
+    font-size: 16px;
+    text-align: center;
+  }
+  /* 🔹 Ocultar el segundo bloque de texto en móviles */
+  .hide-mobile {
+    display: none;
+  }
+  .button{
+    margin: 20px 0 30px auto !important;
+  }
+}

@@ -1,0 +1,202 @@
+.contact-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #F7F7F7;
+  }
+  .contact-item svg{
+    width: 40px;
+    height: auto;
+  }
+  .logo-container {
+    height: 200px;
+    width: 100%;
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .brand-logo{
+    width: 500px;
+    height: auto;
+    box-sizing: border-box;
+    height: auto;
+  }
+  
+  .contact-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 0.5rem;
+  }
+  
+  .contact-title {
+    color: #212529;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .contact-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .contact-item img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .contact-item h3 {
+    color: #212529;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .contact-item p {
+    color: #495057;
+    line-height: 1.6;
+  }
+  
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+  
+  .social-button {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    gap: 0.8rem;
+  }
+  
+  .social-button:hover {
+    transform: translateY(-3px);
+  }
+  
+  .instagram {
+    background: linear-gradient(45deg, #405DE6, #833AB4, #E1306C);
+    color: white;
+  }
+
+  .whatsapp {
+    background: #25D366;
+    color: white;
+  }
+  
+  .cta-section {
+    text-align: center;
+    padding: 4rem 0;
+  }
+  
+  .cta-text {
+    color: #212529;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cta-subtext {
+    color: #495057;
+    font-size: 1.1rem;
+  }
+  
+  .contact-form {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .contact-form h3 {
+    color: #212529;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .contact-form button {
+    background: #212529;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .contact-form button:hover {
+    background: #343a40;
+  }
+  
+  @media (max-width: 768px) {
+    .contact-container {
+      padding: 2rem;
+    }
+    
+    .contact-title {
+      font-size: 2rem;
+    }
+    
+    .cta-text {
+      font-size: 1.8rem;
+    }
+    
+    .social-button {
+      width: 100%;
+      justify-content: center;
+    }
+    .brand-logo{
+      width:300px;
+      height: 100%;
+    }
+    .logo-container{
+      width: 300px;
+      height: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .contact-page {
+      padding: 1rem;
+      width: min-content;
+    }
+    
+    .contact-container {
+      padding: 1.5rem;
+    }
+    
+    .cta-text {
+      font-size: 1.5rem;
+    }
+    .brand-logo{
+      width:300px;
+      height: 100%;
+    }
+    .logo-container{
+      width: 300px;
+      height: auto;
+    }
+  }
