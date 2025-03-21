@@ -1,192 +1,167 @@
-import React, { useState, useEffect } from "react";
-import "./styles/GallerySection.css";
-import Button from "./Button";
-import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
+"use client"
 
-const images = [
-   "/images/photos/Wedding/1.webp",
-   "/images/photos/Wedding/2.webp",
-   "/images/photos/Wedding/3.webp",
-   "/images/photos/Wedding/4.webp",
-   "/images/photos/Wedding/5.webp",
-   "/images/photos/Wedding/6.webp",
-   "/images/photos/Wedding/7.webp",
-   "/images/photos/Wedding/8.webp",
-   "/images/photos/Wedding/9.webp",
-   "/images/photos/Wedding/10.webp", 
-   "/images/photos/Wedding/11.webp", 
-   "/images/photos/Wedding/12.webp", 
-   "/images/photos/Wedding/13.webp", 
-   "/images/photos/Wedding/14.webp", 
-   "/images/photos/Wedding/15.webp", 
-   "/images/photos/Wedding/16.webp", 
-   "/images/photos/Wedding/17.webp", 
-   "/images/photos/Wedding/18.webp", 
-   "/images/photos/Wedding/19.webp", 
-   "/images/photos/Wedding/20.webp", 
-   "/images/photos/Wedding/21.webp", 
-   "/images/photos/Wedding/22.webp", 
-   "/images/photos/Wedding/23.webp", 
-   "/images/photos/Wedding/24.webp", 
-   "/images/photos/Wedding/25.webp", 
-   "/images/photos/Wedding/26.webp", 
-   "/images/photos/Wedding/27.webp", 
-   "/images/photos/Wedding/28.webp", 
-   "/images/photos/Wedding/29.webp", 
-   "/images/photos/Wedding/30.webp", 
-   "/images/photos/Wedding/31.webp", 
-   "/images/photos/Wedding/32.webp", 
-   "/images/photos/Wedding/33.webp", 
-   "/images/photos/Wedding/34.webp", 
-   "/images/photos/Wedding/35.webp", 
-   "/images/photos/Wedding/36.webp", 
-   "/images/photos/Wedding/37.webp", 
-   "/images/photos/Wedding/38.webp", 
-   "/images/photos/Wedding/39.webp", 
-   "/images/photos/Wedding/40.webp", 
-   "/images/photos/Wedding/41.webp", 
-   "/images/photos/Wedding/42.webp", 
-   "/images/photos/Wedding/43.webp", 
-   "/images/photos/Wedding/44.webp", 
-   "/images/photos/Wedding/45.webp", 
-   "/images/photos/Wedding/46.webp", 
-   "/images/photos/Wedding/47.webp", 
-   "/images/photos/Wedding/48.webp", 
-   "/images/photos/Wedding/49.webp", 
-   "/images/photos/Wedding/50.webp", 
-   "/images/photos/Wedding/51.webp", 
-   "/images/photos/Wedding/52.webp", 
-   "/images/photos/Wedding/53.webp", 
-   "/images/photos/Wedding/54.webp", 
-   "/images/photos/Wedding/55.webp", 
-   "/images/photos/Wedding/56.webp", 
-   "/images/photos/Wedding/57.webp", 
-   "/images/photos/Wedding/58.webp", 
-   "/images/photos/Wedding/59.webp", 
-   "/images/photos/Wedding/60.webp", 
-   "/images/photos/Wedding/61.webp", 
-   "/images/photos/Wedding/62.webp", 
-   "/images/photos/Wedding/63.webp", 
-   "/images/photos/Wedding/64.webp", 
-   "/images/photos/Wedding/65.webp", 
-   "/images/photos/Wedding/66.webp", 
-   "/images/photos/Wedding/67.webp", 
-   "/images/photos/Wedding/68.webp", 
-   "/images/photos/Wedding/69.webp", 
-   "/images/photos/Wedding/70.webp", 
-   "/images/photos/Wedding/71.webp", 
-   "/images/photos/Wedding/72.webp", 
-   "/images/photos/Wedding/73.webp", 
-   "/images/photos/Wedding/74.webp", 
-   "/images/photos/Wedding/75.webp", 
-   "/images/photos/Wedding/76.webp", 
-   "/images/photos/Wedding/77.webp", 
-   "/images/photos/Wedding/78.webp", 
-   "/images/photos/Wedding/79.webp", 
-   "/images/photos/Wedding/80.webp", 
-   "/images/photos/Wedding/81.webp", 
-   "/images/photos/Wedding/82.webp", 
-   "/images/photos/Wedding/83.webp", 
-   "/images/photos/Wedding/84.webp", 
-   "/images/photos/Wedding/85.webp", 
-   "/images/photos/Wedding/86.webp", 
-   "/images/photos/Wedding/87.webp", 
-   "/images/photos/Wedding/88.webp", 
-   "/images/photos/Wedding/89.webp", 
-   "/images/photos/Wedding/90.webp", 
-   "/images/photos/Wedding/91.webp", 
-   "/images/photos/Wedding/92.webp", 
-   "/images/photos/Wedding/93.webp", 
-   "/images/photos/Wedding/94.webp", 
-   "/images/photos/Wedding/95.webp", 
-   "/images/photos/Wedding/96.webp", 
-   "/images/photos/Wedding/97.webp", 
-   "/images/photos/Wedding/98.webp", 
-   "/images/photos/Wedding/99.webp", 
-   "/images/photos/Wedding/100.webp",
-   "/images/photos/Wedding/101.webp",
-   "/images/photos/Wedding/102.webp",
-   "/images/photos/Wedding/103.webp",
-   "/images/photos/Wedding/104.webp",
-   "/images/photos/Wedding/105.webp",
-   "/images/photos/Wedding/106.webp",
-   "/images/photos/Wedding/107.webp",
-   "/images/photos/Wedding/108.webp",
-   "/images/photos/Wedding/109.webp",
-   "/images/photos/Wedding/110.webp",
-   "/images/photos/Wedding/111.webp",
-   "/images/photos/Wedding/112.webp",
-   "/images/photos/Wedding/113.webp",
-   "/images/photos/Wedding/114.webp",
-   "/images/photos/Wedding/115.webp",
-   "/images/photos/Wedding/116.webp",
-   "/images/photos/Wedding/117.webp",
-   "/images/photos/Wedding/118.webp",
-   "/images/photos/Wedding/119.webp",
-   "/images/photos/Wedding/120.webp",
-   "/images/photos/Wedding/121.webp",
-   "/images/photos/Wedding/122.webp",
-   "/images/photos/Wedding/123.webp",
-   "/images/photos/Wedding/124.webp",
-   "/images/photos/Wedding/125.webp",
-   "/images/photos/Wedding/126.webp",
-];
+import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import Button from "./Button"
+import "./styles/GallerySection.css"
 
 const GallerySection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [images, setImages] = useState([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [autoplay, setAutoplay] = useState(true)
+  const autoplayTimeoutRef = useRef(null)
 
-  // Cambio automático de imagen (para ambas vistas)
+  // Load wedding images
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    const loadImages = async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch("/images.json")
+        const data = await response.json()
 
+        // Filter only wedding images and limit to 20 for better performance
+        const weddingImages = data
+          .filter((img) => img.type === "Wedding")
+          .slice(0, 20)
+          .map((img) => img.src)
+
+        setImages(weddingImages)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Error loading gallery images:", error)
+        setIsLoading(false)
+      }
+    }
+
+    loadImages()
+  }, [])
+
+  // Handle autoplay
+  useEffect(() => {
+    if (!autoplay || images.length === 0) return
+
+    const startAutoplay = () => {
+      autoplayTimeoutRef.current = setTimeout(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+        startAutoplay()
+      }, 5000)
+    }
+
+    startAutoplay()
+
+    return () => {
+      if (autoplayTimeoutRef.current) {
+        clearTimeout(autoplayTimeoutRef.current)
+      }
+    }
+  }, [autoplay, images.length, currentIndex])
+
+  // Navigation functions
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
+    setAutoplay(false)
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1))
+  }
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
+    setAutoplay(false)
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+  }
+
+  // Resume autoplay after user interaction
+  const handleMouseLeave = () => {
+    setAutoplay(true)
+  }
 
   return (
-    <section className="gallery-section">
-      <div className="title-container-bodas">
-        <h1 className="title-bodas">WEDDINGS</h1>
-        <div className="line-bodas"></div>
-      </div>
+    <section className="gallery-section" onMouseLeave={handleMouseLeave}>
+      <motion.div
+        className="section-header"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="line"></div>
+        <h2 className="section-title">WEDDINGS</h2>
+        <div className="line"></div>
+      </motion.div>
 
-      {/* Slideshow para ambas vistas */}
-      <div className="gallery-slider">
-        <button className="gallery-button prev" onClick={prevSlide}>
-          <AiOutlineCaretLeft />
-        </button>
-        <img
-          src={images[currentIndex]}
-          alt={`Slide ${currentIndex}`}
-          className="gallery-slide"
-        />
-        <button className="gallery-button next" onClick={nextSlide}>
-          <AiOutlineCaretRight />
-        </button>
-      </div>
+      <div className="gallery-content">
+        <motion.div
+          className="gallery-slider"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {isLoading ? (
+            <div className="gallery-loading">
+              <div className="loading-spinner"></div>
+              <p>Loading beautiful moments...</p>
+            </div>
+          ) : (
+            <>
+              <button className="gallery-nav prev" onClick={prevSlide} aria-label="Previous image">
+                <ChevronLeft size={24} />
+              </button>
 
-      {/* Texto siempre visible */}
-      <div className="gallery-text">
-        <h2>Capturing your Love Story</h2>
-        <p className="gallery-paragraph">
-          Your wedding is a story of <b>love</b>, <b>laughter</b>, and{" "}
-          <b>unforgettable moments</b>. As your photographer, I turn these
-          emotions into timeless images that reflect your unique journey.
-        </p>
-        <Button className="button-gallery" text="View Gallery" link={"portfolio"}/>
+              <div className="gallery-slides">
+                {images.map((src, index) => (
+                  <motion.img
+                    key={`wedding-${index}`}
+                    src={src}
+                    alt={`Wedding photography by Diego Aloma ${index + 1}`}
+                    className={`gallery-slide ${index === currentIndex ? "active" : ""}`}
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: index === currentIndex ? 1 : 0,
+                      scale: index === currentIndex ? 1 : 0.95,
+                    }}
+                    transition={{ duration: 0.5 }}
+                    loading={index < 3 ? "eager" : "lazy"}
+                  />
+                ))}
+              </div>
+
+              <button className="gallery-nav next" onClick={nextSlide} aria-label="Next image">
+                <ChevronRight size={24} />
+              </button>
+
+              <div className="gallery-indicators">
+                {images.map((_, index) => (
+                  <button
+                    key={`indicator-${index}`}
+                    className={`indicator ${index === currentIndex ? "active" : ""}`}
+                    onClick={() => {
+                      setAutoplay(false)
+                      setCurrentIndex(index)
+                    }}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </motion.div>
+
+        <motion.div
+          className="gallery-text"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h2 className="gallery-title">Capturing your Love Story</h2>
+          <p className="gallery-description">
+            Your wedding is a story of <strong>love</strong>, <strong>laughter</strong>, and{" "}
+            <strong>unforgettable moments</strong>. As your photographer, I turn these emotions into timeless images
+            that reflect your unique journey.
+          </p>
+          <Button text="View Gallery" link="/portfolio" variant="primary" size="large" className="gallery-button" />
+        </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default GallerySection;
+export default GallerySection
+

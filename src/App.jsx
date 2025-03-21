@@ -1,14 +1,39 @@
-import React from "react";
-import Router from "./Routes/Router";
-import Header from "./Layout/Components/Header";
-import { BrowserRouter } from "react-router-dom";
+"use client"
+
+import { useEffect, useState } from "react"
+import { BrowserRouter } from "react-router-dom"
+import Router from "./Routes/Router"
+import Header from "./Layout/Components/Header"
+import LoadingScreen from "./Layout/Components/LoadingScreen"
+import "./App.css"
 
 function App() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 1500)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <BrowserRouter>
-    <Header />
-    <Router />
+      {loading ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          <Header />
+          <main className="main-content">
+            <Router />
+          </main>
+        </>
+      )}
     </BrowserRouter>
-  );
+  )
 }
-export default App;
+
+export default App
+

@@ -85,18 +85,6 @@ const AboutMe = () => {
         textbutton={"Keep you Love Story"}
         
       />
-
-      <CategorySection
-        type="NewbornAndFamily"
-        title="Newborn & Family Photography"
-        description="Those first precious days deserve to be remembered forever. With patience and 
-        care, I create heartwarming images you'll treasure as your family grows. My sessions capture 
-        the authentic bonds that make your family unique, whether in studio sessions or outdoor 
-        adventures filled with natural connection."
-        align="right"
-        textbutton={"Create  Timeless Portraits"}
-       />
-
       <CategorySection
         type="Portrait"
         title="Portrait Photography"
@@ -104,10 +92,22 @@ const AboutMe = () => {
         for professional headshots or creative personal sessions, I work to bring out your most 
         authentic self. Using natural light and innovative compositions, I create images that 
         don't just show who you are, but tell your unique story."
-        align="left"
-        textbutton={"Preserve Childhood Magic"}
+        align="right"
+        textbutton={"Create  Timeless Portraits"}
+
         
       />
+      <CategorySection
+        type="NewbornAndFamily"
+        title="Newborn & Family Photography"
+        description="Those first precious days deserve to be remembered forever. With patience and 
+        care, I create heartwarming images you'll treasure as your family grows. My sessions capture 
+        the authentic bonds that make your family unique, whether in studio sessions or outdoor 
+        adventures filled with natural connection."
+        align="left"
+        textbutton={"Preserve Childhood Magic"}
+
+       />
     </section>
   );
 };

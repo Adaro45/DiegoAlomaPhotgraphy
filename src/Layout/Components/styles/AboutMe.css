@@ -1,132 +1,191 @@
-.title-container {
-  width: 100%;
+.about-me-section {
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
-  gap: 1rem;
-  }
-  .title {
-  width: 30%;
-  font-size: 36px;
-}
-.line{
-  width: 70%;
-  left: 0;
-  transform: translateY(-50%);
-  height: 2px;
-  background-color: #212529;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-.About-Me {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  padding-top: 50px;
-  margin: 1rem;
-}
-
-/* Contenedor de la imagen y el texto */
-.about-content {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2rem;
-  width: 110%;
-  max-width: 1100px;
-  padding: 1rem;
-}
-
-/* Imagen */
-.image-me-container {
-  text-align: center;
-}
-
-.image-me {
-  width: 100%;
-  max-width: 400px;
-  border-radius: 0 !important;
-}
-
-/* Contenedor del texto */
-.paragraph-container {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  margin-bottom: 3rem;
   gap: 1.5rem;
 }
 
-/* Párrafos */
-.paragraph {
-  width: 100%;
-  font-family: 'Roboto', sans-serif;
-  font-size: 18px;
-  line-height: 1.5;
-  text-align:justify;
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #212529;
+  text-align: center;
+  letter-spacing: 2px;
 }
 
-/* Redes sociales */
-.Social-media {
+.line {
+  flex: 1;
+  height: 2px;
+  background-color: #212529;
+  max-width: 200px;
+}
+
+.about-content {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 4rem;
   align-items: center;
-  margin-top: 0.5rem;
 }
-.Social-media_item{
+
+.image-container {
+  flex: 1;
+  max-width: 450px;
+}
+
+.profile-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.5s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.02);
+}
+
+.text-container {
+  flex: 1.5;
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.name-title {
+  font-size: 2rem;
+  color: #212529;
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.name-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #2da8d6;
+}
+
+.about-paragraph {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #495057;
+  text-align: justify;
+}
+
+.social-media-links {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  margin-top: 1rem;
 }
-.Social-media_item a{
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   text-decoration: none;
-  
-}
-.icon {
-  height: 20px;
-  width: auto;
+  color: #495057;
+  transition: color 0.3s ease, transform 0.3s ease;
+  padding: 0.5rem 0;
 }
 
-/* Botón */
-.button {
-  margin-top: 10px;
+.social-link:hover {
+  color: #2da8d6;
+  transform: translateX(5px);
 }
 
-/* 🔹 Estilos para MÓVIL */
-@media (max-width: 768px) {
-  .title{
-    font-size: 15px;
-  }
+.social-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.social-link:hover .social-icon {
+  transform: scale(1.1);
+}
+
+.button-container {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 992px) {
   .about-content {
     flex-direction: column;
+    gap: 2rem;
+  }
+
+  .image-container {
+    max-width: 350px;
+    margin: 0 auto;
+  }
+
+  .text-container {
+    text-align: center;
+  }
+
+  .name-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .about-paragraph {
+    text-align: center;
+  }
+
+  .social-media-links {
     align-items: center;
-    text-align: center;
-    gap: 1rem;
   }
 
-  /* Imagen más pequeña en móviles */
-  .image-me {
-    max-width: 100%;
-    height: auto;
+  .social-link {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-me-section {
+    padding: 3rem 1.5rem;
   }
 
-  /* Texto ocupa todo el ancho */
-  .paragraph-container {
-    width: 100%;
-    padding: 0 1rem;
+  .section-title {
+    font-size: 2rem;
   }
-  .paragraph{
-    font-size: 16px;
-    text-align: center;
-  }
-  /* 🔹 Ocultar el segundo bloque de texto en móviles */
+
   .hide-mobile {
     display: none;
   }
-  .button{
-    margin: 20px 0 30px auto !important;
+
+  .name-title {
+    font-size: 1.75rem;
+  }
+
+  .about-paragraph {
+    font-size: 1rem;
   }
 }
+
+@media (max-width: 480px) {
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .line {
+    width: 80%;
+    max-width: none;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+}
+

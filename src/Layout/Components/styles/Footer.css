@@ -1,78 +1,158 @@
-
 .footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem 0 2rem;
-    height: 150px;
-    margin-top: 4rem;
-    background-color: #6C757D;  /* Fondo oscuro para el footer */
-    color: white;  /* Color de texto blanco */
-    text-align: center;  /* Centrar el texto */
-    font-size: 14px;  /* Tamaño de fuente más pequeño */
-  }
-  .footer p {
-    margin: 0;  /* Eliminar márgenes */
-    font-size: 16px;  /* Ajustar tamaño de texto para derechos reservados */
-  }
-  .social-media-footer {
-    margin-top: 15px;
-  }
-  .social-media-footer a {
-    margin: 0 10px;  /* Espacio entre los iconos */
-  }
-  .social-media-footer .icon {
-    width: 30px;  /* Tamaño de los iconos */
-    height: 30px;  /* Mantener el tamaño proporcional */
-    margin-bottom: 20px;
-    transition: transform 0.3s ease; 
-    filter: invert(1) brightness(100%) grayscale(100%); 
-  }
-  .social-media-footer .icon:hover {
-    transform: scale(1.1);  /* Aumentar el tamaño del icono al pasar el mouse */
-  }
-  
-  .social-media-footer a:active .icon {
-    transform: scale(0.95);  /* Reducir ligeramente el icono al hacer clic */
-  }
-  .logo-footer {
-    margin-top: 15px;  /* Separación entre el texto y el logo */
-    width: 200px;  /* Tamaño del logo */
-    height: auto;  /* Mantener el aspecto del logo */
-  }
-  .contact-mail {
+  background-color: #212529;
+  color: #fff;
+  padding: 4rem 0 1.5rem;
+  margin-top: 5rem;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-brand {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  width: 180px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  font-size: 0.95rem;
+  color: #adb5bd;
+  margin-bottom: 1.5rem;
+}
+
+.footer h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.footer h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #2da8d6;
+}
+
+.footer-links nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-links a {
+  color: #dee2e6;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: #2da8d6;
+  transform: translateX(5px);
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #dee2e6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-contact-item:hover {
+  color: #2da8d6;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-icons a {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: #2da8d6;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 3rem auto 0;
+  padding: 1.5rem 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #adb5bd;
+}
+
+.footer-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.heart-icon {
+  color: #e25555;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
   }
-  .contact-mail a {
-    margin-top: auto;
-    margin-bottom: auto;  
-    font-size: 16px; 
-    text-decoration: none; 
-    color: white;
+  50% {
+    transform: scale(1.2);
   }
-  .contact-mail a:hover {
-    text-decoration: underline; 
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 1rem;
   }
-  .contact-mail a:active {
-    color: #FFC107;
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1.5rem;
   }
-  .icon-email{
-    width: 30px;
-    height: auto;
-    filter: invert(1) brightness(100%) grayscale(100%);
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem 1.5rem 0;
   }
-  @media (max-width: 768px) {
-    .footer {
-      flex-direction: column;
-      height: auto;
-      padding: 2rem 1rem;
-      gap: 1rem;
-    }
-    .logo-footer {
-      width: 200px;
-    }
-  }
+}
+

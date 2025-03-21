@@ -1,173 +1,409 @@
-/* Contenedor principal: usamos flex para poder animar el cambio de ancho */
+.portfolio-page {
+  padding: 6rem 2rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.portfolio-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: #212529;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.portfolio-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: #2da8d6;
+}
+
 .portfolio-layout {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  min-height: 100vh;
   position: relative;
   transition: all 0.3s ease;
+  min-height: 70vh;
 }
-/* Aside de filtros (sticky y animado) */
-.portfolio-filter-section {
+
+/* Sidebar */
+.portfolio-sidebar {
   width: 250px;
   flex-shrink: 0;
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 10px;
-  position: sticky;
-  top: 3.5rem;
-  overflow-y: auto;
-  transition: width 0.3s ease, opacity 0.3s ease;
-}
-
-/* Cuando el aside está visible */
-.portfolio-layout.portfolio-aside-visible .portfolio-filter-section {
-  height: max-content;
-  width: 250px;
-  opacity: 1;
-}
-
-/* Cuando se oculta el aside: se anima a 0 de ancho y se oculta */
-.portfolio-layout:not(.portfolio-aside-visible) .portfolio-filter-section {
-  width: 0;
-  opacity: 0;
-  padding: 0;
-  border: none;
-}
-
-/* La sección de galería se expande automáticamente */
-.portfolio-gallery-section {
-  flex: 1;
-  transition: all 0.3s ease;
-}
-
-/* Botón para togglear el aside */
-.portfolio-toggle-aside-button {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   position: fixed;
-  top: 10px;
-  left: 40px;
-  z-index: 1100000;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-.portfolio-toggle-aside-button svg{
-  width: 50px;
-  height: 50px;
-}
-.portfolio-toggle-aside-button:hover {
-  transform: scale(1.1);
+  top: 100px;
+  left: 0;
+  bottom: 0;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  z-index: 90;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Lista de categorías */
-.portfolio-category-list {
+.sidebar-title {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #212529;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.sidebar-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #2da8d6;
+}
+
+.category-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.portfolio-category-item {
-  padding: 10px 15px;
-  margin-bottom: 10px;
+.category-item {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
-.portfolio-category-item:hover {
-  background-color: #e0e0e0;
+.category-item:hover {
+  background-color: rgba(45, 168, 214, 0.1);
+  color: #2da8d6;
 }
 
-.portfolio-category-item.active {
-  background-color: #333;
-  color: #fff;
+.category-item.active {
+  background-color: #2da8d6;
+  color: white;
 }
 
-/* Sección de galería */
-.portfolio-gallery-section {
-  /* Ocupa todo el espacio disponible */
-  width: 100%;
-}
-
-/* Galería en grid (estilo masonry) */
-.portfolio-gallery-grid {
+/* Toggle sidebar button */
+.toggle-sidebar-button {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background-color: #2da8d6;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 50px;
+  border-radius: 0 4px 4px 0;
   display: flex;
-  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
-.portfolio-gallery-column {
+.toggle-sidebar-button:hover {
+  background-color: #2590b8;
+  width: 35px;
+}
+
+/* Main gallery */
+.portfolio-layout.sidebar-visible .portfolio-gallery {
+  margin-left: 270px; /* sidebar width + gap */
+}
+
+.portfolio-gallery {
   flex: 1;
+  transition: margin-left 0.3s ease;
+}
+
+/* Mobile category selector */
+.mobile-category-selector {
+  position: sticky;
+  top: 80px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.mobile-filter-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.mobile-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mobile-category {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.mobile-category:hover {
+  background-color: rgba(45, 168, 214, 0.1);
+}
+
+.mobile-category.active {
+  background-color: #2da8d6;
+  color: white;
+}
+
+/* Gallery grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.gallery-column {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1.5rem;
 }
 
-.portfolio-gallery-item {
-  width: 100%;
-  break-inside: avoid;
-}
-
-.portfolio-gallery-item img {
-  width: 100%;
-  display: block;
+.gallery-item {
+  cursor: pointer;
+  transition: all 0.3s ease;
   border-radius: 8px;
-  transition: transform 0.3s;
-  object-fit: cover;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.portfolio-gallery-item img:hover {
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover .image-container img {
   transform: scale(1.05);
 }
 
-/* Estilos para móvil */
-@media (max-width: 768px) {
-  .portfolio-layout {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-  .portfolio-filter-section {
-    display: none;
-  }
-  .portfolio-gallery-section {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
-  /* Para la galería móvil, se usan columnas con flex-wrap */
-  .portfolio-gallery-grid {
-    flex-wrap: wrap;
-  }
-  .portfolio-gallery-column {
-    width: 48%;
-  }
-  /* Selector personalizado sticky para móvil */
-  .portfolio-mobile-category-selector-container {
-    position: sticky;
-    top: 80px;
-    z-index: 999;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 1rem;
-    margin-bottom: 10px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-  }
-  .portfolio-mobile-category-selector {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  .portfolio-mobile-category-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-  .portfolio-mobile-category-item.active {
-    background-color: #333;
-    color: #fff;
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-category {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Loading state */
+.gallery-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #6c757d;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(45, 168, 214, 0.3);
+  border-radius: 50%;
+  border-top-color: #2da8d6;
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox-info {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  padding: 1rem;
+}
+
+.lightbox-category {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-sidebar {
+    width: 250px;
+    top: 0;
+    height: 100vh;
+    border-radius: 0;
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+
+  .sidebar-visible .portfolio-sidebar {
+    transform: translateX(0);
+  }
+
+  .portfolio-layout.sidebar-visible .portfolio-gallery {
+    margin-left: 0;
+  }
+
+  .toggle-sidebar-button {
+    display: none;
+  }
+
+  .mobile-filter-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .portfolio-page {
+    padding: 5rem 1.5rem 2rem;
+  }
+
+  .portfolio-title {
+    font-size: 2rem;
+    margin: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .portfolio-layout {
+    flex-direction: column;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .gallery-column {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-page {
+    padding: 4rem 1rem 1.5rem;
+  }
+
+  .portfolio-title {
+    font-size: 1.75rem;
+    margin: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .mobile-categories {
+    justify-content: center;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lightbox {
+    padding: 1rem;
+  }
+
+  .lightbox-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+

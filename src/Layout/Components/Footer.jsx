@@ -1,41 +1,74 @@
-import React from "react";
-import "./styles/Footer.css"; // Asegúrate de incluir los estilos aquí
+import { Link } from "react-router-dom"
+import { FaInstagram, FaFacebookF, FaEnvelope, FaHeart } from "react-icons/fa"
+import "./styles/Footer.css"
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="footer">
-      <img src="/images/WhiteLogo.png" alt="Logo" className="logo-footer" />
-      <div className="social-media-footer">
-        <a
-          href="https://www.instagram.com/diegoaloma/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="/images/icons/logotipo-de-instagram.png"
-            alt="Instagram"
-            className="icon"
-          />
-        </a>
-        <a
-          href="https://www.facebook.com/DiegoAloma"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="/images/icons/facebook.png"
-            alt="Facebook"
-            className="icon"
-          />
-        </a>
-        <p>&copy; 2024 Diego Aloma</p>
-      </div>
-      <p className="contact-mail">
-        <img src="/images/icons/email.png" alt="email" className="icon-email" />
-        <a href="mailto:diegoaloma@photographer.com">diegoaloma@photographer.com</a>
-      </p>
-    </footer>
-  );
-};
+      <div className="footer-container">
+        <div className="footer-brand">
+          <img src="/images/WhiteLogo.png" alt="Diego Aloma Photography" className="footer-logo" />
+          <p className="footer-tagline">Capturing moments, creating memories</p>
+        </div>
 
-export default Footer;
+        <div className="footer-links">
+          <h3>Quick Links</h3>
+          <nav>
+            <Link to="/">Home</Link>
+            <Link to="/about-me">About Me</Link>
+            <Link to="/portfolio">Portfolio</Link>
+            <Link to="/contact">Contact</Link>
+          </nav>
+        </div>
+
+        <div className="footer-contact">
+          <h3>Get In Touch</h3>
+          <a href="mailto:alomadiego302@gmail.com" className="footer-contact-item">
+            <FaEnvelope />
+            <span>alomadiego302@gmail.com</span>
+          </a>
+          <p className="footer-contact-item">
+            <span>New Jersey, USA</span>
+          </p>
+          <p className="footer-contact-item">
+            <span>+1 (862) 361-8242</span>
+          </p>
+        </div>
+
+        <div className="footer-social">
+          <h3>Follow Me</h3>
+          <div className="social-icons">
+            <a
+              href="https://www.instagram.com/diegoaloma_photos/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <FaInstagram />
+            </a>
+            <a
+              href="https://www.facebook.com/DiegoAlomaPhotography"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <FaFacebookF />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p>&copy; {currentYear} Diego Aloma Photography. All rights reserved.</p>
+        <p className="footer-credit">
+          Made with <FaHeart className="heart-icon" /> for capturing life's precious moments
+        </p>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer
+
