@@ -1,0 +1,7 @@
+# www.robotstxt.org/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.diegoalomaphotography.com/sitemap.xml
+

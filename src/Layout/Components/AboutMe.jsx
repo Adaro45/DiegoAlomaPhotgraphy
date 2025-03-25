@@ -58,7 +58,7 @@ const AboutMe = () => {
               rel="noopener noreferrer"
             >
               <img src="/images/icons/logotipo-de-instagram.png" alt="Instagram" className="social-icon" />
-              <span>diegoaloma_photos</span>
+              <span className="main-span">diegoaloma_photos</span>
             </a>
 
             <a
@@ -68,7 +68,7 @@ const AboutMe = () => {
               rel="noopener noreferrer"
             >
               <img src="/images/icons/facebook.png" alt="Facebook" className="social-icon" />
-              <span>Diego Alomá Photography</span>
+              <span className="main-span">Diego Alomá Photography</span>
             </a>
 
             <a
@@ -78,7 +78,7 @@ const AboutMe = () => {
               rel="noopener noreferrer"
             >
               <img src="/images/icons/threads.png" alt="Threads" className="social-icon" />
-              <span>diegoaloma_photos</span>
+              <span className="main-span">diegoaloma_photos</span>
             </a>
           </div>
 

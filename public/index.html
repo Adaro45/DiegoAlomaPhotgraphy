@@ -1,12 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DiegoAloma</title>
-    <link rel="icon" href="./images/logo.png" />
-  </head>
-  <body>
-        <div id="root"></div>
-  </body>
+<head>
+  <!-- Basic meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- Title and description -->
+  <title>Diego Aloma Photography | Wedding & Portrait Photographer in New Jersey</title>
+  <meta name="description" content="Professional photographer specializing in weddings, portraits, and family photography in New Jersey. Capturing authentic moments and genuine emotions to create unforgettable memories.">
+  
+  <!-- Keywords -->
+  <meta name="keywords" content="photographer, wedding photography, portraits, family photography, New Jersey, Diego Aloma, professional photography, photo sessions">
+  
+  <!-- Author and copyright -->
+  <meta name="author" content="Diego Aloma">
+  <meta name="copyright" content="© 2024 Diego Aloma Photography">
+  
+  <!-- Robots -->
+  <meta name="robots" content="index, follow">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.diegoalomaphotography.com">
+  
+  <!-- Favicons for different devices -->
+  <link rel="icon" href="/images/logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#2da8d6">
+  <meta name="msapplication-TileColor" content="#2da8d6">
+  <meta name="theme-color" content="#ffffff">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.diegoalomaphotography.com">
+  <meta property="og:title" content="Diego Aloma Photography | Wedding & Portrait Photographer">
+  <meta property="og:description" content="Professional photographer specializing in weddings, portraits, and family photography. Capturing authentic moments and genuine emotions.">
+  <meta property="og:image" content="https://www.diegoalomaphotography.com/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Diego Aloma Photography">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://www.diegoalomaphotography.com">
+  <meta name="twitter:title" content="Diego Aloma Photography | Wedding & Portrait Photographer">
+  <meta name="twitter:description" content="Professional photographer specializing in weddings, portraits, and family photography. Capturing authentic moments and genuine emotions.">
+  <meta name="twitter:image" content="https://www.diegoalomaphotography.com/images/twitter-image.jpg">
+  <meta name="twitter:creator" content="@diegoaloma_photos">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/fonts/Sinera.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="/fonts/SFPRODISPLAYREGULAR.OTF" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="/images/BlackLogo.png" as="image">
+  
+  <!-- Structured Data / Schema.org -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Diego Aloma Photography",
+      "image": "https://www.diegoalomaphotography.com/images/logo.png",
+      "url": "https://www.diegoalomaphotography.com",
+      "telephone": "+18623618242",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New Jersey",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 40.0583,
+        "longitude": -74.4057
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+      },
+      "sameAs": [
+        "https://www.instagram.com/diegoaloma_photos/",
+        "https://www.facebook.com/DiegoAlomaPhotography",
+        "https://www.threads.net/@diegoaloma_photos"
+      ],
+      "priceRange": "$$",
+      "description": "Professional photographer specializing in weddings, portraits, and family photography in New Jersey. Capturing authentic moments and genuine emotions to create unforgettable memories."
+    }
+  </script>
+  
+  <!-- Photographer Schema -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Diego Aloma",
+      "jobTitle": "Professional Photographer",
+      "image": "https://www.diegoalomaphotography.com/images/Diego.jpeg",
+      "url": "https://www.diegoalomaphotography.com",
+      "email": "alomadiego302@gmail.com",
+      "telephone": "+18623618242",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New Jersey",
+        "addressCountry": "US"
+      },
+      "knowsAbout": ["Wedding Photography", "Portraits", "Family Photography", "Newborn Photography"],
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Diego Aloma Photography"
+      }
+    }
+  </script>
+  
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.diegoalomaphotography.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About Me",
+          "item": "https://www.diegoalomaphotography.com/about-me"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Portfolio",
+          "item": "https://www.diegoalomaphotography.com/portfolio"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Contact",
+          "item": "https://www.diegoalomaphotography.com/contact"
+        }
+      ]
+    }
+  </script>
+  
+  <!-- Google tag (gtag.js) - Replace with your Google Analytics ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZBH14F0DEV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZBH14F0DEV');
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <!-- Noscript for users without JavaScript -->
+  <noscript>
+    <div style="padding: 20px; text-align: center; background-color: #f8d7da; color: #721c24; margin: 20px;">
+      For a better experience, please enable JavaScript in your browser.
+    </div>
+  </noscript>
+</body>
 </html>
+

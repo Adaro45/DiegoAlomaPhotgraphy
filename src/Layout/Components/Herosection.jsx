@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import "./styles/ImageSlider.css"
+import slideshowImages from "../../data/slideshow_images"
 
 const ImageSlider = () => {
   const [images, setImages] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   // Shuffle array using Fisher-Yates algorithm
   const shuffleArray = useCallback((array) => {
@@ -20,29 +20,24 @@ const ImageSlider = () => {
     return shuffled
   }, [])
 
-  // Fetch images from JSON file
+  // Initialize images from the imported array
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch("/images.json")
-        if (!response.ok) {
-          throw new Error("Failed to load images")
-        }
-        const imageData = await response.json()
+    try {
+      // Format the images to match the expected structure
+      const formattedImages = slideshowImages.map((src, index) => ({
+        id: index + 1,
+        src: src,
+        type: "SlideShow",
+      }))
 
-        // Limit to 20 images for better performance
-        const limitedImages = shuffleArray(imageData).slice(0, 20)
-        setImages(limitedImages)
-        setLoading(false)
-      } catch (err) {
-        console.error("Error loading images:", err)
-        setError(err.message)
-        setLoading(false)
-      }
+      // Shuffle the images and limit to 20 for better performance
+      const shuffledImages = shuffleArray(formattedImages).slice(0, 20)
+      setImages(shuffledImages)
+      setLoading(false)
+    } catch (error) {
+      console.error("Error initializing slideshow images:", error)
+      setLoading(false)
     }
-
-    fetchImages()
   }, [shuffleArray])
 
   // Auto-advance slides
@@ -83,26 +78,22 @@ const ImageSlider = () => {
     )
   }
 
-  if (error) {
-    return <div className="error-message">Error: {error}</div>
-  }
-
   return (
     <div className="image-slider-container">
       <div className="image-slider">
         <AnimatePresence>
           {images.map((image, index) => (
             <motion.div
-              key={`${image.src}-${index}`}
+              key={`slideshow-${index}`}
               className={`slider-image-container ${getClassName(index)}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: getClassName(index) !== "slider-hidden" ? 1 : 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 1 }}
             >
               <img
                 src={image.src || "/placeholder.svg"}
-                alt={`Photography by Diego Aloma - ${image.type}`}
+                alt={`Photography by Diego Aloma - Slideshow ${index + 1}`}
                 className="slider-image"
                 loading={index < 5 ? "eager" : "lazy"}
               />
