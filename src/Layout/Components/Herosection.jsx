@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { usePublicData } from "../../context/PublicDataContext"
 import "./styles/ImageSlider.css"
-import slideshowImages from "../../data/slideshow_images"
 
 const ImageSlider = () => {
+  const { slideshows, loading: dataLoading } = usePublicData()
   const [images, setImages] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
 
-  // Shuffle array using Fisher-Yates algorithm
+  // Shuffle array usando Fisher-Yates algorithm
   const shuffleArray = useCallback((array) => {
     const shuffled = [...array]
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -20,27 +21,37 @@ const ImageSlider = () => {
     return shuffled
   }, [])
 
-  // Initialize images from the imported array
+  // Cargar imágenes del slideshow "home-page"
   useEffect(() => {
+    if (dataLoading) return
+
     try {
-      // Format the images to match the expected structure
-      const formattedImages = slideshowImages.map((src, index) => ({
+      const homePageImages = slideshows["home-page"] || []
+      
+      if (homePageImages.length === 0) {
+        console.warn("No hay imágenes en el slideshow home-page")
+        setLoading(false)
+        return
+      }
+
+      // Formatear las imágenes
+      const formattedImages = homePageImages.map((src, index) => ({
         id: index + 1,
         src: src,
         type: "SlideShow",
       }))
 
-      // Shuffle the images and limit to 20 for better performance
+      // Mezclar y limitar a 20 para mejor performance
       const shuffledImages = shuffleArray(formattedImages).slice(0, 20)
       setImages(shuffledImages)
       setLoading(false)
     } catch (error) {
-      console.error("Error initializing slideshow images:", error)
+      console.error("Error inicializando slideshow:", error)
       setLoading(false)
     }
-  }, [shuffleArray])
+  }, [slideshows, dataLoading, shuffleArray])
 
-  // Auto-advance slides
+  // Auto-avanzar slides
   useEffect(() => {
     if (images.length === 0) return
 
@@ -51,7 +62,7 @@ const ImageSlider = () => {
     return () => clearInterval(interval)
   }, [images])
 
-  // Determine image position classes
+  // Determinar clases de posición de imagen
   const getClassName = (index) => {
     const totalImages = images.length
     if (totalImages === 0) return "slider-hidden"
@@ -69,11 +80,19 @@ const ImageSlider = () => {
     return "slider-hidden"
   }
 
-  if (loading) {
+  if (loading || dataLoading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
         <p>Loading beautiful moments...</p>
+      </div>
+    )
+  }
+
+  if (images.length === 0) {
+    return (
+      <div className="loading-container">
+        <p>No slideshow images available</p>
       </div>
     )
   }
@@ -106,4 +125,3 @@ const ImageSlider = () => {
 }
 
 export default ImageSlider
-

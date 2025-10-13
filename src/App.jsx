@@ -5,23 +5,28 @@ import { BrowserRouter } from "react-router-dom"
 import Router from "./Routes/Router"
 import Header from "./Layout/Components/Header"
 import LoadingScreen from "./Layout/Components/LoadingScreen"
+import { PublicDataProvider, usePublicData } from "./context/PublicDataContext"
 import "./App.css"
 
-function App() {
-  const [loading, setLoading] = useState(true)
+// Componente interno que usa el contexto
+function AppContent() {
+  const { loading: dataLoading, imagesPreloaded } = usePublicData()
+  const [showLoading, setShowLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1500)
-
-    return () => clearTimeout(timer)
-  }, [])
+    // Esperar a que los datos estén listos Y las imágenes pre-cargadas
+    if (!dataLoading && imagesPreloaded) {
+      // Pequeño delay para mejor UX
+      const timer = setTimeout(() => {
+        setShowLoading(false)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [dataLoading, imagesPreloaded])
 
   return (
-    <BrowserRouter>
-      {loading ? (
+    <>
+      {showLoading ? (
         <LoadingScreen />
       ) : (
         <>
@@ -31,9 +36,18 @@ function App() {
           </main>
         </>
       )}
+    </>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <PublicDataProvider>
+        <AppContent />
+      </PublicDataProvider>
     </BrowserRouter>
   )
 }
 
 export default App
-

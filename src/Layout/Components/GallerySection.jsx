@@ -3,42 +3,42 @@
 import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { usePublicData } from "../../context/PublicDataContext"
 import Button from "./Button"
 import "./styles/GallerySection.css"
 
 const GallerySection = () => {
+  const { slideshows, loading: dataLoading } = usePublicData()
   const [images, setImages] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [autoplay, setAutoplay] = useState(true)
   const autoplayTimeoutRef = useRef(null)
 
-  // Load wedding images
+  // Cargar imágenes del slideshow "weddings-home-page"
   useEffect(() => {
-    const loadImages = async () => {
-      try {
-        setIsLoading(true)
-        const response = await fetch("/images.json")
-        const data = await response.json()
+    if (dataLoading) return
 
-        // Filter only wedding images and limit to 20 for better performance
-        const weddingImages = data
-          .filter((img) => img.type === "Wedding")
-          .slice(0, 20)
-          .map((img) => img.src)
+    try {
+      const weddingsImages = slideshows["weddings-home-page"] || []
 
-        setImages(weddingImages)
+      if (weddingsImages.length === 0) {
+        console.warn("No hay imágenes en el slideshow weddings-home-page")
         setIsLoading(false)
-      } catch (error) {
-        console.error("Error loading gallery images:", error)
-        setIsLoading(false)
+        return
       }
+
+      // Limitar a 20 para mejor performance
+      const limitedImages = weddingsImages.slice(0, 20)
+      setImages(limitedImages)
+      setIsLoading(false)
+    } catch (error) {
+      console.error("Error cargando imágenes de galería:", error)
+      setIsLoading(false)
     }
+  }, [slideshows, dataLoading])
 
-    loadImages()
-  }, [])
-
-  // Handle autoplay
+  // Manejar autoplay
   useEffect(() => {
     if (!autoplay || images.length === 0) return
 
@@ -58,7 +58,7 @@ const GallerySection = () => {
     }
   }, [autoplay, images.length, currentIndex])
 
-  // Navigation functions
+  // Funciones de navegación
   const prevSlide = () => {
     setAutoplay(false)
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1))
@@ -69,7 +69,7 @@ const GallerySection = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
   }
 
-  // Resume autoplay after user interaction
+  // Reanudar autoplay después de interacción del usuario
   const handleMouseLeave = () => {
     setAutoplay(true)
   }
@@ -94,10 +94,14 @@ const GallerySection = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {isLoading ? (
+          {isLoading || dataLoading ? (
             <div className="gallery-loading">
               <div className="loading-spinner"></div>
               <p>Loading beautiful moments...</p>
+            </div>
+          ) : images.length === 0 ? (
+            <div className="gallery-loading">
+              <p>No wedding photos available</p>
             </div>
           ) : (
             <>
@@ -164,4 +168,3 @@ const GallerySection = () => {
 }
 
 export default GallerySection
-
