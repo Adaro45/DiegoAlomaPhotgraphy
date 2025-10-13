@@ -17,40 +17,58 @@ let supabaseInstance = null
 
 const getSupabaseClient = () => {
   if (!supabaseInstance) {
-    // Para Create React App usa process.env
-    const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
-    const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY
+    // Compatibilidad: preferir NEXT_PUBLIC_ (Next.js), fall back a REACT_APP_ (CRA)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.REACT_APP_SUPABASE_ANON_KEY
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error("❌ Faltan variables de entorno de Supabase")
-      console.error("REACT_APP_SUPABASE_URL:", supabaseUrl ? "✓" : "✗")
-      console.error("REACT_APP_SUPABASE_ANON_KEY:", supabaseKey ? "✓" : "✗")
       return null
     }
 
     supabaseInstance = createClient(supabaseUrl, supabaseKey)
-    console.log("✅ Supabase inicializado correctamente")
   }
   return supabaseInstance
 }
 
 export const PublicDataProvider = ({ children }) => {
   const [slideshows, setSlideshows] = useState({})
-  const [galleryPhotos, setGalleryPhotos] = useState([])
+  const [galleryPhotos, setGalleryPhotos] = useState({
+    Wedding: [],
+    Portrait: [],
+    NewbornAndFamily: []
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [imagesPreloaded, setImagesPreloaded] = useState(false)
 
   const supabase = getSupabaseClient()
+  const DEFAULT_BUCKET = "photographer-images" // cambia si tu bucket se llama distinto
 
-  // Función para obtener URL pública de una imagen
+  // Obtener URL pública (intenta publicUrl y si no existe, crea signed url temporal)
   const getPublicUrl = useCallback(
-    (path, bucket = "photographer-images") => {
+    async (path, bucket = DEFAULT_BUCKET) => {
       if (!supabase || !path) return ""
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from(bucket).getPublicUrl(path)
-      return publicUrl
+      try {
+        // getPublicUrl es síncrono en supabase-js; devuelve data.publicUrl si el bucket es público
+        const { data: publicData, error: publicError } = supabase.storage.from(bucket).getPublicUrl(path)
+        if (publicError) {
+          // no rompemos aquí, intentamos fallback a signed url
+          console.warn("getPublicUrl returned error (will try signed url):", publicError.message || publicError)
+        }
+        const publicUrl = publicData?.publicUrl
+        if (publicUrl) return publicUrl
+
+        // Fallback: crear signed url temporal (60s)
+        const { data: signedData, error: signedError } = await supabase.storage.from(bucket).createSignedUrl(path, 60)
+        if (signedError) {
+          console.error("Error creando signed URL:", signedError)
+          return ""
+        }
+        return signedData?.signedUrl || ""
+      } catch (err) {
+        console.error("Error en getPublicUrl:", err)
+        return ""
+      }
     },
     [supabase]
   )
@@ -61,16 +79,13 @@ export const PublicDataProvider = ({ children }) => {
       if (!supabase) return { images: [], error: "Supabase no inicializado" }
 
       try {
-        // Obtener slideshow por slug
         const { data: slideshow, error: slideshowError } = await supabase
           .from("slideshows")
           .select("id, name, slug")
           .eq("slug", slug)
           .single()
-
         if (slideshowError) throw slideshowError
 
-        // Obtener fotos del slideshow
         const { data: photos, error: photosError } = await supabase
           .from("slideshow_photos")
           .select(
@@ -89,21 +104,25 @@ export const PublicDataProvider = ({ children }) => {
 
         if (photosError) throw photosError
 
-        // Formatear las fotos para devolver solo URLs
-        const images = photos.map((sp) => getPublicUrl(sp.photos.storage_path))
+        // photos puede ser array de registros; mapear y resolver URLs asincrónicamente
+        const imagePromises = photos.map(async (sp) => {
+          const storagePath = sp?.photos?.storage_path || sp?.storage_path || null
+          return await getPublicUrl(storagePath)
+        })
 
+        const images = (await Promise.all(imagePromises)).filter(Boolean)
         return { images, error: null }
       } catch (error) {
         console.error(`Error cargando slideshow ${slug}:`, error)
-        return { images: [], error: error.message }
+        return { images: [], error: error.message || String(error) }
       }
     },
     [supabase, getPublicUrl]
   )
 
-  // Cargar fotos de la galería principal
+  // Cargar fotos de la galería principal organizadas por tipo
   const loadGalleryPhotos = useCallback(async () => {
-    if (!supabase) return { images: [], error: "Supabase no inicializado" }
+    if (!supabase) return { photos: {}, error: "Supabase no inicializado" }
 
     try {
       const { data: photos, error } = await supabase
@@ -114,20 +133,43 @@ export const PublicDataProvider = ({ children }) => {
 
       if (error) throw error
 
-      // Formatear las fotos para devolver solo URLs
-      const images = photos.map((photo) => getPublicUrl(photo.storage_path))
 
-      return { images, error: null }
+      const photosByType = {
+        Wedding: [],
+        Portrait: [],
+        NewbornAndFamily: []
+      }
+
+      // Mapear y resolver URLs en paralelo
+      const photosWithUrls = await Promise.all(
+        (photos || []).map(async (photo) => {
+          const url = await getPublicUrl(photo.storage_path)
+          return { ...photo, url }
+        })
+      )
+
+      photosWithUrls.forEach((p) => {
+        if (!p.url) return
+        // Asegurarse que la propiedad type exista y sea una de las esperadas
+        if (p.type && Object.prototype.hasOwnProperty.call(photosByType, p.type)) {
+          photosByType[p.type].push(p.url)
+        } else {
+          // Si hay tipos inesperados, puedes decidir push en un bucket 'other' o ignorar
+          console.warn("Tipo de foto inesperado (ignored):", p.type)
+        }
+      })
+
+      return { photos: photosByType, error: null }
     } catch (error) {
       console.error("Error cargando fotos de galería:", error)
-      return { images: [], error: error.message }
+      return { photos: {}, error: error.message || String(error) }
     }
   }, [supabase, getPublicUrl])
 
-  // Pre-cargar imágenes críticas
+  // Pre-cargar imágenes críticas (mantengo tu implementación)
   const preloadImages = useCallback(async (imageUrls, maxImages = 5) => {
-    const imagesToPreload = imageUrls.slice(0, maxImages)
-    
+    const imagesToPreload = (imageUrls || []).slice(0, maxImages)
+
     const preloadPromises = imagesToPreload.map((url) => {
       return new Promise((resolve, reject) => {
         const img = new Image()
@@ -142,7 +184,7 @@ export const PublicDataProvider = ({ children }) => {
       return true
     } catch (error) {
       console.warn("Algunas imágenes no se pudieron pre-cargar:", error)
-      return true // Continuar aunque algunas fallen
+      return true
     }
   }, [])
 
@@ -154,75 +196,63 @@ export const PublicDataProvider = ({ children }) => {
       setImagesPreloaded(true)
       return
     }
-  
+
     setLoading(true)
     setError(null)
-  
+
     try {
-      // Cargar TODOS los slideshows en paralelo
       const [
         homePageResult,
-        weddingsHomePageResult,
         weddingAboutMeResult,
         portraitAboutMeResult,
         newbornAboutMeResult,
         galleryResult
       ] = await Promise.all([
         loadSlideshowBySlug("home-page"),
-        loadSlideshowBySlug("weddings-home-page"),
         loadSlideshowBySlug("wedding-about-me"),
         loadSlideshowBySlug("portrait-about-me"),
         loadSlideshowBySlug("newborn-about-me"),
-        loadGalleryPhotos(),
+        loadGalleryPhotos()
       ])
-  
-      // Guardar los slideshows organizados por slug
+
       const slideshowsData = {
-        "home-page": homePageResult.images,
-        "weddings-home-page": weddingsHomePageResult.images,
-        "wedding-about-me": weddingAboutMeResult.images,
-        "portrait-about-me": portraitAboutMeResult.images,
-        "newborn-about-me": newbornAboutMeResult.images,
+        "home-page": homePageResult.images || [],
+        "wedding-about-me": weddingAboutMeResult.images || [],
+        "portrait-about-me": portraitAboutMeResult.images || [],
+        "newborn-about-me": newbornAboutMeResult.images || []
       }
-  
+
       setSlideshows(slideshowsData)
-      setGalleryPhotos(galleryResult.images)
-  
-      // Pre-cargar las primeras 5 imágenes del home-page
-      if (homePageResult.images.length > 0) {
+      setGalleryPhotos(galleryResult.photos || { Wedding: [], Portrait: [], NewbornAndFamily: [] })
+
+      if (homePageResult.images?.length > 0) {
         await preloadImages(homePageResult.images, 5)
       }
-  
+
       setImagesPreloaded(true)
     } catch (error) {
       console.error("Error cargando datos iniciales:", error)
-      setError(error.message)
+      setError(error.message || String(error))
       setImagesPreloaded(true)
     } finally {
       setLoading(false)
     }
   }, [supabase, loadSlideshowBySlug, loadGalleryPhotos, preloadImages])
 
-  // Cargar datos al montar el componente
   useEffect(() => {
     loadInitialData()
   }, [loadInitialData])
 
   const value = {
-    // Datos
-    slideshows, // { "home-page": [...urls], "weddings-home-page": [...urls] }
-    galleryPhotos, // [...urls]
-    
-    // Estados
+    slideshows,
+    galleryPhotos,
     loading,
     error,
     imagesPreloaded,
-    
-    // Funciones
     getPublicUrl,
     loadSlideshowBySlug,
     loadGalleryPhotos,
-    refreshData: loadInitialData,
+    refreshData: loadInitialData
   }
 
   return <PublicDataContext.Provider value={value}>{children}</PublicDataContext.Provider>

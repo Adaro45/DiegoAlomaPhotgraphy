@@ -4,13 +4,20 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Filter, ChevronRight, ChevronLeft, X } from "lucide-react"
 import "./styles/Portfolio.css"
-import { portfolioImages } from "../../globalimages"
+// import { portfolioImages } from "../../globalimages" <-- ya no se usa
 import Footer from "../Components/Footer"
+import { usePublicData } from "../../context/PublicDataContext"
 
 const Portfolio = () => {
+  const { galleryPhotos, loading: dataLoading, getPublicUrl } = usePublicData()
+
+  // Responsive
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" ? window.innerWidth < 768 : true)
+  const [isAsideVisible, setIsAsideVisible] = useState(typeof window !== "undefined" ? window.innerWidth >= 768 : true)
+
+  // Estado de imágenes dinámicas
+  const [portfolioImages, setPortfolioImages] = useState([]) // { id, type, src, filename? }
   const [selectedCategory, setSelectedCategory] = useState("All")
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-  const [isAsideVisible, setIsAsideVisible] = useState(!isMobile)
   const [isLoading, setIsLoading] = useState(true)
   const [lightboxImage, setLightboxImage] = useState(null)
   const asideRef = useRef(null)
@@ -18,110 +25,210 @@ const Portfolio = () => {
 
   const categories = ["All", "Wedding", "Portrait", "NewbornAndFamily"]
 
-  // Format category names for display
+  // Formateo para mostrar
   const formatCategoryName = (category) => {
     if (category === "NewbornAndFamily") return "Newborn & Family"
     return category
   }
 
-  // Filter images based on selected category
-  const filteredImages =
-    selectedCategory === "All" ? portfolioImages : portfolioImages.filter((image) => image.type === selectedCategory)
+  // ----- Resolvemos galleryPhotos del context a portfolioImages (URLs completas) -----
+  useEffect(() => {
+    let mounted = true
+    const resolveAll = async () => {
+      setIsLoading(true)
 
-  // Sort images by category for "All" view
-  const sortedImages =
-    selectedCategory === "All"
-      ? [...filteredImages].sort((a, b) => {
-          const order = { Wedding: 1, Portrait: 2, NewbornAndFamily: 3 }
-          const aOrder = order[a.type] || 4
-          const bOrder = order[b.type] || 4
-          return aOrder - bOrder
-        })
-      : filteredImages
+      try {
+        // galleryPhotos esperado como { Wedding: [...], Portrait: [...], NewbornAndFamily: [...] }
+        const types = ["Wedding", "Portrait", "NewbornAndFamily"]
+        const results = []
 
-  // Distribute images into columns for masonry layout
-  const getColumns = (items, numCols) => {
-    const columns = Array.from({ length: numCols }, () => [])
+        for (const type of types) {
+          const raw = galleryPhotos?.[type] || []
+          // raw puede ser array de strings o objetos
+          const resolvedForType = await Promise.all(
+            raw.map(async (item, idx) => {
+              if (!item) return null
 
-    // Distribute images to balance column heights
-    const itemsWithHeight = items.map((item) => ({
-      ...item,
-      // Estimate height based on a typical aspect ratio
-      estimatedHeight: 300, // Default height estimate
-    }))
+              // Si es string y ya es URL absoluta => usarla
+              if (typeof item === "string" && /^(https?:)?\/\//i.test(item)) {
+                return {
+                  id: `${type}-${idx}-${Math.random().toString(36).slice(2, 8)}`,
+                  type,
+                  src: item,
+                }
+              }
 
-    const columnHeights = Array(numCols).fill(0)
+              // Si es string pero no tiene http -> asumimos storage_path
+              if (typeof item === "string") {
+                if (getPublicUrl && typeof getPublicUrl === "function") {
+                  try {
+                    const url = await getPublicUrl(item)
+                    if (url) {
+                      return {
+                        id: `${type}-${idx}-${Math.random().toString(36).slice(2, 8)}`,
+                        type,
+                        src: url,
+                      }
+                    }
+                    console.warn("getPublicUrl returned empty for:", item)
+                    return null
+                  } catch (err) {
+                    console.warn("Error getting public url for storage_path:", item, err)
+                    return null
+                  }
+                } else {
+                  console.warn("getPublicUrl no está disponible en el context; item ignorado:", item)
+                  return null
+                }
+              }
 
-    itemsWithHeight.forEach((item) => {
-      // Find the shortest column
-      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights))
-      columns[shortestColumnIndex].push(item)
-      columnHeights[shortestColumnIndex] += item.estimatedHeight
-    })
+              // Si es objeto, preferimos item.url -> item.publicUrl -> item.storage_path
+              if (typeof item === "object") {
+                if (item.url && /^(https?:)?\/\//i.test(item.url)) {
+                  return {
+                    id: item.id || `${type}-${idx}-${Math.random().toString(36).slice(2, 8)}`,
+                    type,
+                    src: item.url,
+                    filename: item.filename,
+                  }
+                }
+                if (item.publicUrl && /^(https?:)?\/\//i.test(item.publicUrl)) {
+                  return {
+                    id: item.id || `${type}-${idx}-${Math.random().toString(36).slice(2, 8)}`,
+                    type,
+                    src: item.publicUrl,
+                    filename: item.filename,
+                  }
+                }
+                if (item.storage_path) {
+                  if (getPublicUrl && typeof getPublicUrl === "function") {
+                    try {
+                      const url = await getPublicUrl(item.storage_path)
+                      if (url) {
+                        return {
+                          id: item.id || `${type}-${idx}-${Math.random().toString(36).slice(2, 8)}`,
+                          type,
+                          src: url,
+                          filename: item.filename,
+                        }
+                      }
+                      console.warn("getPublicUrl returned empty for object storage_path:", item.storage_path)
+                      return null
+                    } catch (err) {
+                      console.warn("Error getting public url for object.storage_path:", item.storage_path, err)
+                      return null
+                    }
+                  } else {
+                    console.warn("getPublicUrl no disponible; objeto ignorado:", item)
+                    return null
+                  }
+                }
+              }
 
-    return columns
-  }
+              return null
+            })
+          )
 
-  const numColumns = isMobile ? 2 : 3
-  const columns = numColumns === 1 ? [sortedImages] : getColumns(sortedImages, numColumns)
+          // Filtrar nulos y añadir al resultado final
+          resolvedForType.forEach((r) => {
+            if (r && r.src) results.push(r)
+          })
+        }
 
-  // Handle window resize
+        // Ordenación por tipo para "All" (mantener Wedding, Portrait, NewbornAndFamily)
+        const orderMap = { Wedding: 1, Portrait: 2, NewbornAndFamily: 3 }
+        results.sort((a, b) => (orderMap[a.type] || 99) - (orderMap[b.type] || 99))
+
+        if (!mounted) return
+        setPortfolioImages(results)
+        setIsLoading(false)
+      } catch (err) {
+        console.error("Error resolviendo galleryPhotos a portfolioImages:", err)
+        if (!mounted) return
+        setPortfolioImages([])
+        setIsLoading(false)
+      }
+    }
+
+    // Si el context aún está cargando, esperaremos
+    if (dataLoading) {
+      setIsLoading(true)
+    }
+
+    // Ejecutar resolución (no bloquear si dataLoading true; el effect volverá a dispararse)
+    resolveAll()
+
+    return () => {
+      mounted = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [galleryPhotos, dataLoading, getPublicUrl])
+
+  // ----- Responsive: resize listener -----
   useEffect(() => {
     const handleResize = () => {
       const newIsMobile = window.innerWidth < 768
       setIsMobile(newIsMobile)
-
-      // Only auto-show sidebar on desktop
-      if (!newIsMobile !== !isMobile) {
-        setIsAsideVisible(!newIsMobile)
-      }
+      // mostrar sidebar solo en desktop
+      setIsAsideVisible(window.innerWidth >= 768)
     }
-
     window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 800)
+  // ----- Lógica de selección y columnas (masonry) -----
+  const filteredImages = selectedCategory === "All" ? portfolioImages : portfolioImages.filter((img) => img.type === selectedCategory)
 
-    return () => {
-      window.removeEventListener("resize", handleResize)
-      clearTimeout(timer)
+  const getColumns = (items, numCols) => {
+    const columns = Array.from({ length: numCols }, () => [])
+    // simple balancing (puedes mejorar con alturas reales si lo necesitas)
+    const columnHeights = Array(numCols).fill(0)
+    const estimatedHeight = 300
+    items.forEach((item) => {
+      const idx = columnHeights.indexOf(Math.min(...columnHeights))
+      columns[idx].push(item)
+      columnHeights[idx] += estimatedHeight
+    })
+    return columns
+  }
+
+  const numColumns = isMobile ? 2 : 3
+  const columns = numColumns === 1 ? [filteredImages] : getColumns(filteredImages, numColumns)
+
+  // Simulación de carga local para transiciones (mantengo tu UX)
+  useEffect(() => {
+    // Si el context está cargando, mantener loader
+    if (dataLoading) {
+      setIsLoading(true)
+      return
     }
-  }, [isMobile])
+    // Si las imágenes dinámicas aún se están resolviendo, isLoading será true
+    const timer = setTimeout(() => {
+      // solo quitar loading si ya resolvimos portfolioImages
+      setIsLoading(false)
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [dataLoading, portfolioImages.length])
 
-  // Handle category change
+  // ----- Sidebar / filtros -----
   const handleCategoryChange = (newCategory) => {
     setSelectedCategory(newCategory)
     setIsLoading(true)
-
-    // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: "smooth" })
-
-    // Simulate loading delay when changing categories
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 500)
-
-    // Close mobile sidebar after selection
-    if (isMobile) {
-      setIsAsideVisible(false)
-    }
+    setTimeout(() => setIsLoading(false), 250)
+    if (isMobile) setIsAsideVisible(false)
   }
 
-  // Toggle sidebar visibility
   const toggleSidebar = (e) => {
     if (e) e.stopPropagation()
     setIsAsideVisible((prev) => !prev)
   }
 
-  // Open lightbox
+  // ----- Lightbox -----
   const openLightbox = (image) => {
     setLightboxImage(image)
     document.body.style.overflow = "hidden"
   }
-
-  // Close lightbox
   const closeLightbox = () => {
     setLightboxImage(null)
     document.body.style.overflow = "auto"
@@ -151,7 +258,7 @@ const Portfolio = () => {
             {isAsideVisible ? <ChevronLeft /> : <ChevronRight />}
           </button>
 
-          {/* Sidebar with category filters */}
+          {/* Sidebar con categorías */}
           <AnimatePresence>
             {isAsideVisible && (
               <motion.aside
@@ -180,7 +287,7 @@ const Portfolio = () => {
 
           {/* Main gallery content */}
           <main className="portfolio-gallery">
-            {/* Mobile category selector */}
+            {/* Mobile selector */}
             {isMobile && (
               <div className="mobile-category-selector">
                 <div className="mobile-filter-icon" onClick={toggleSidebar}>
@@ -201,24 +308,18 @@ const Portfolio = () => {
               </div>
             )}
 
-            {/* Loading state */}
             {isLoading ? (
               <div className="gallery-loading">
-                <div className="loading-spinner"></div>
+                <div className="loading-spinner" />
                 <p>Loading gallery...</p>
               </div>
             ) : (
-              <motion.div
-                className="gallery-grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
+              <motion.div className="gallery-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
                 {columns.map((column, colIndex) => (
                   <div key={`column-${colIndex}`} className="gallery-column">
                     {column.map((image, imgIndex) => (
                       <motion.div
-                        key={`${image.type}-${image.id}`}
+                        key={image.id || `${image.type}-${imgIndex}`}
                         className="gallery-item"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -230,11 +331,7 @@ const Portfolio = () => {
                         onClick={() => openLightbox(image)}
                       >
                         <div className="image-container">
-                          <img
-                            src={image.src || "/placeholder.svg"}
-                            alt={`${image.type} photography by Diego Aloma`}
-                            loading="lazy"
-                          />
+                          <img src={image.src || "/placeholder.svg"} alt={`${image.type} photography by Diego Aloma`} loading="lazy" />
                           <div className="image-overlay">
                             <span className="image-category">{formatCategoryName(image.type)}</span>
                           </div>
@@ -255,11 +352,7 @@ const Portfolio = () => {
               <X size={24} />
             </button>
             <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-              <img
-                src={lightboxImage.src || "/placeholder.svg"}
-                alt={`${lightboxImage.type} photography by Diego Aloma`}
-                className="lightbox-image"
-              />
+              <img src={lightboxImage.src || "/placeholder.svg"} alt={`${lightboxImage.type} photography by Diego Aloma`} className="lightbox-image" />
               <div className="lightbox-info">
                 <span className="lightbox-category">{formatCategoryName(lightboxImage.type)}</span>
               </div>
@@ -267,10 +360,10 @@ const Portfolio = () => {
           </div>
         )}
       </div>
+
       <Footer />
     </>
   )
 }
 
 export default Portfolio
-

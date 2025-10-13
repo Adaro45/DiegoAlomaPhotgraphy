@@ -8,68 +8,129 @@ import Button from "./Button"
 import "./styles/GallerySection.css"
 
 const GallerySection = () => {
-  const { slideshows, loading: dataLoading } = usePublicData()
+  const { galleryPhotos, loading: dataLoading, loadSlideshowBySlug } = usePublicData()
+
   const [images, setImages] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [autoplay, setAutoplay] = useState(true)
-  const autoplayTimeoutRef = useRef(null)
+  const intervalRef = useRef(null)
 
-  // Cargar imágenes del slideshow "weddings-home-page"
+  const SLUG = "weddings-home-page" // <-- cambia aquí si tu slug es distinto
+
+  // Cargar slideshow por slug y fallback a galleryPhotos.Wedding
   useEffect(() => {
     if (dataLoading) return
+    let mounted = true
 
-    try {
-      const weddingsImages = slideshows["weddings-home-page"] || []
+    const load = async () => {
+      setIsLoading(true)
+      try {
+        const result = await loadSlideshowBySlug(SLUG) // { images, error }
+        if (!mounted) return
 
-      if (weddingsImages.length === 0) {
-        console.warn("No hay imágenes en el slideshow weddings-home-page")
+        // Si la carga del slideshow devolvió imágenes válidas, las usamos
+        if (result && Array.isArray(result.images) && result.images.length > 0) {
+          setImages(result.images.slice(0, 20))
+          setCurrentIndex(0)
+          setIsLoading(false)
+          return
+        }
+
+        // Si no hay imágenes en el slideshow, fallback a galleryPhotos.Wedding
+        console.warn(`⚠️ Slideshow '${SLUG}' vacío o no encontrado, usando galleryPhotos.Wedding como fallback`)
+        const rawWedding = galleryPhotos?.Wedding || []
+
+        // Normalizar: cada item puede ser string (url) o objeto { url, storage_path, ... }
+        const weddingImages = rawWedding
+          .map((item) => {
+            if (!item) return null
+            if (typeof item === "string") return item
+            if (typeof item === "object") return item.url || item.storage_path || item.publicUrl || null
+            return null
+          })
+          .filter(Boolean)
+
+        if (weddingImages.length === 0) {
+          console.warn("⚠️ No hay imágenes disponibles en galleryPhotos.Wedding")
+          setImages([])
+          setCurrentIndex(0)
+          setIsLoading(false)
+          return
+        }
+
+        setImages(weddingImages.slice(0, 20))
+        setCurrentIndex(0)
         setIsLoading(false)
-        return
+      } catch (err) {
+        console.error("❌ Error cargando slideshow para GallerySection:", err)
+        // fallback sencillo
+        const rawWedding = galleryPhotos?.Wedding || []
+        const weddingImages = rawWedding
+          .map((item) => {
+            if (!item) return null
+            if (typeof item === "string") return item
+            if (typeof item === "object") return item.url || item.storage_path || item.publicUrl || null
+            return null
+          })
+          .filter(Boolean)
+
+        if (!mounted) return
+        setImages(weddingImages.slice(0, 20))
+        setCurrentIndex(0)
+        setIsLoading(false)
       }
-
-      // Limitar a 20 para mejor performance
-      const limitedImages = weddingsImages.slice(0, 20)
-      setImages(limitedImages)
-      setIsLoading(false)
-    } catch (error) {
-      console.error("Error cargando imágenes de galería:", error)
-      setIsLoading(false)
-    }
-  }, [slideshows, dataLoading])
-
-  // Manejar autoplay
-  useEffect(() => {
-    if (!autoplay || images.length === 0) return
-
-    const startAutoplay = () => {
-      autoplayTimeoutRef.current = setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-        startAutoplay()
-      }, 5000)
     }
 
-    startAutoplay()
+    load()
 
     return () => {
-      if (autoplayTimeoutRef.current) {
-        clearTimeout(autoplayTimeoutRef.current)
+      mounted = false
+    }
+  }, [dataLoading, galleryPhotos, loadSlideshowBySlug])
+
+  // Asegurar que currentIndex está dentro del rango
+  useEffect(() => {
+    if (images.length === 0) {
+      setCurrentIndex(0)
+      return
+    }
+    if (currentIndex >= images.length) {
+      setCurrentIndex(0)
+    }
+  }, [images, currentIndex])
+
+  // Autoplay con setInterval
+  useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+
+    if (!autoplay || images.length === 0) return
+
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (images.length > 0 ? (prev + 1) % images.length : 0))
+    }, 5000)
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
       }
     }
-  }, [autoplay, images.length, currentIndex])
+  }, [autoplay, images.length])
 
-  // Funciones de navegación
   const prevSlide = () => {
     setAutoplay(false)
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1))
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? Math.max(images.length - 1, 0) : prevIndex - 1))
   }
 
   const nextSlide = () => {
     setAutoplay(false)
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+    setCurrentIndex((prevIndex) => (images.length > 0 ? (prevIndex + 1) % images.length : 0))
   }
 
-  // Reanudar autoplay después de interacción del usuario
   const handleMouseLeave = () => {
     setAutoplay(true)
   }
@@ -102,6 +163,7 @@ const GallerySection = () => {
           ) : images.length === 0 ? (
             <div className="gallery-loading">
               <p>No wedding photos available</p>
+              <p className="error-hint">Add wedding photos to the gallery from the dashboard</p>
             </div>
           ) : (
             <>
@@ -123,6 +185,10 @@ const GallerySection = () => {
                     }}
                     transition={{ duration: 0.5 }}
                     loading={index < 3 ? "eager" : "lazy"}
+                    onError={(e) => {
+                      console.error("❌ Image failed to load:", src)
+                      e.currentTarget.style.display = "none"
+                    }}
                   />
                 ))}
               </div>

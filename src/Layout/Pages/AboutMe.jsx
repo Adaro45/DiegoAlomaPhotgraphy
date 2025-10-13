@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { usePublicData } from "../context/PublicDataContext"
+import { usePublicData } from "../../context/PublicDataContext"
 import "./styles/AboutMe.css"
 import Button from "../Components/Button"
 
