@@ -74,51 +74,140 @@ export const PublicDataProvider = ({ children }) => {
   )
 
   // Cargar un slideshow específico por slug
-  const loadSlideshowBySlug = useCallback(
-    async (slug) => {
-      if (!supabase) return { images: [], error: "Supabase no inicializado" }
+  // Cargar un slideshow específico por slug
+const loadSlideshowBySlug = useCallback(
+  async (slug) => {
+    if (!supabase) return { images: [], error: "Supabase no inicializado" }
 
-      try {
-        const { data: slideshow, error: slideshowError } = await supabase
-          .from("slideshows")
-          .select("id, name, slug")
-          .eq("slug", slug)
-          .single()
-        if (slideshowError) throw slideshowError
-
-        const { data: photos, error: photosError } = await supabase
-          .from("slideshow_photos")
-          .select(
-            `
-            order_index,
-            photos (
-              id,
-              storage_path,
-              filename,
-              type
-            )
-          `
-          )
-          .eq("slideshow_id", slideshow.id)
-          .order("order_index")
-
-        if (photosError) throw photosError
-
-        // photos puede ser array de registros; mapear y resolver URLs asincrónicamente
-        const imagePromises = photos.map(async (sp) => {
-          const storagePath = sp?.photos?.storage_path || sp?.storage_path || null
-          return await getPublicUrl(storagePath)
-        })
-
-        const images = (await Promise.all(imagePromises)).filter(Boolean)
-        return { images, error: null }
-      } catch (error) {
-        console.error(`Error cargando slideshow ${slug}:`, error)
-        return { images: [], error: error.message || String(error) }
+    try {
+      // 1. Obtener el slideshow
+      const { data: slideshow, error: slideshowError } = await supabase
+        .from("slideshows")
+        .select("id, name, slug")
+        .eq("slug", slug)
+        .single()
+      
+      if (slideshowError) {
+        console.error(`Error obteniendo slideshow "${slug}":`, slideshowError)
+        throw slideshowError
       }
-    },
-    [supabase, getPublicUrl]
-  )
+
+
+      // 2. Obtener las fotos CON JOIN MANUAL
+      const { data: slideshowPhotos, error: photosError } = await supabase
+        .from("slideshow_photos")
+        .select("id, order_index, photo_id")
+        .eq("slideshow_id", slideshow.id)
+        .order("order_index")
+
+      if (photosError) {
+        console.error(`Error obteniendo slideshow_photos:`, photosError)
+        throw photosError
+      }
+
+
+      if (!slideshowPhotos || slideshowPhotos.length === 0) {
+        return { images: [], error: null }
+      }
+
+      // 3. Obtener los IDs de las fotos (asegurar que sean strings)
+      const photoIds = slideshowPhotos
+        .map(sp => sp.photo_id)
+        .filter(Boolean)
+        .map(id => String(id)) // ⬅️ Convertir a string explícitamente
+
+
+      // 4. DIVIDIR en lotes si hay muchos IDs (Supabase tiene límites)
+      const BATCH_SIZE = 100
+      const photoBatches = []
+      
+      for (let i = 0; i < photoIds.length; i += BATCH_SIZE) {
+        photoBatches.push(photoIds.slice(i, i + BATCH_SIZE))
+      }
+
+
+      // 5. Traer las fotos en lotes
+      const allPhotos = []
+      
+      for (const batch of photoBatches) {
+        const { data: batchPhotos, error: batchError } = await supabase
+          .from("photos")
+          .select("id, storage_path, filename, type")
+          .in("id", batch)
+
+        if (batchError) {
+          console.error(`Error obteniendo lote de photos:`, batchError)
+          continue // Continuar con el siguiente lote
+        }
+
+        if (batchPhotos) {
+          allPhotos.push(...batchPhotos)
+        }
+      }
+
+
+      // 6. Identificar fotos faltantes
+      const foundPhotoIds = new Set(allPhotos.map(p => String(p.id)))
+      const missingPhotoIds = photoIds.filter(id => !foundPhotoIds.has(String(id)))
+      
+      if (missingPhotoIds.length > 0) {
+        // Intentar buscar una por una las faltantes para debug
+        for (const missingId of missingPhotoIds.slice(0, 3)) { // Solo las primeras 3
+          const { data: checkPhoto, error: checkError } = await supabase
+            .from("photos")
+            .select("id, filename, storage_path")
+            .eq("id", missingId)
+            .single()
+          
+          if (checkError) {
+            console.error(`❌ Error buscando foto ${missingId}:`, checkError)
+          }
+        }
+      }
+
+      // 7. Crear un mapa de photo_id -> photo
+      const photoMap = new Map()
+      allPhotos.forEach(photo => {
+        photoMap.set(String(photo.id), photo)
+      })
+
+      // 8. Combinar slideshow_photos con photos y ordenar
+      const orderedPhotos = slideshowPhotos
+        .map(sp => {
+          const photo = photoMap.get(String(sp.photo_id))
+          if (!photo) {
+            console.warn(`⚠️ Foto no encontrada para photo_id: ${sp.photo_id}`)
+            return null
+          }
+          return {
+            ...photo,
+            order_index: sp.order_index
+          }
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.order_index - b.order_index)
+
+
+      // 9. Resolver URLs
+      const imagePromises = orderedPhotos.map(async (photo) => {
+        const url = await getPublicUrl(photo.storage_path)
+        if (!url) {
+          console.warn(`⚠️ No se pudo obtener URL para: ${photo.storage_path}`)
+        }
+        return url
+      })
+
+      const images = (await Promise.all(imagePromises)).filter(Boolean)
+      
+      
+      return { images, error: null }
+    } catch (error) {
+      console.error(`❌ Error cargando slideshow ${slug}:`, error)
+      return { images: [], error: error.message || String(error) }
+    }
+  },
+  [supabase, getPublicUrl]
+)
 
   // Cargar fotos de la galería principal organizadas por tipo
   const loadGalleryPhotos = useCallback(async () => {

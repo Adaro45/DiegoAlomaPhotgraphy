@@ -127,7 +127,7 @@ const ContactPage = () => {
 
             <div className="availability-card">
               <h3>Availability</h3>
-              <p>Currently booking for 2023-2024 weddings and portrait sessions.</p>
+              <p>Currently booking for 2025-2026 weddings and portrait sessions.</p>
               <p>Limited dates available for peak season (May-October).</p>
             </div>
           </motion.div>

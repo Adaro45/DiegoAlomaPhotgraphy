@@ -42,7 +42,7 @@ const ImageSlider = () => {
       }))
 
       // Mezclar y limitar a 20 para mejor performance
-      const shuffledImages = shuffleArray(formattedImages).slice(0, 20)
+      const shuffledImages = shuffleArray(formattedImages)
       setImages(shuffledImages)
       setLoading(false)
     } catch (error) {
