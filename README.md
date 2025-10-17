@@ -88,4 +88,3 @@ Feel free to explore, fork, and adapt it for educational use. Attribution is app
 
 ⭐ **If you found this project helpful or inspiring, give it a star on GitHub!**
 
-```
