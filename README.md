@@ -75,7 +75,7 @@ This project was an excellent opportunity to:
 
 **Andrés Darío Alomá Alonso**
 Full Stack Developer — React / Web Optimization
-🌐 [Portfolio](https://github.com/Adaro45) | ✉️ [andresdaloma@gmail.com](mailto:andresdaloma@gmail.com)
+🌐 [Portfolio](https://daroportfolio.tech/) | ✉️ [andresdaloma@gmail.com](mailto:andresdaloma@gmail.com)
 
 ---
 
