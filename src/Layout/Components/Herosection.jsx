@@ -57,7 +57,7 @@ const ImageSlider = () => {
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, 10000)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [images])
