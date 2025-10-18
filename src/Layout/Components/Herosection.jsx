@@ -57,28 +57,10 @@ const ImageSlider = () => {
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, 3500)
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [images])
-
-  // Determinar clases de posición de imagen
-  const getClassName = (index) => {
-    const totalImages = images.length
-    if (totalImages === 0) return "slider-hidden"
-
-    const leftIndex = (currentIndex - 1 + totalImages) % totalImages
-    const rightIndex = (currentIndex + 1) % totalImages
-    const farLeftIndex = (currentIndex - 2 + totalImages) % totalImages
-    const farRightIndex = (currentIndex + 2) % totalImages
-
-    if (index === currentIndex) return "slider-center"
-    if (index === leftIndex) return "slider-left"
-    if (index === rightIndex) return "slider-right"
-    if (index === farLeftIndex) return "slider-far-left"
-    if (index === farRightIndex) return "slider-far-right"
-    return "slider-hidden"
-  }
 
   if (loading || dataLoading) {
     return (
@@ -100,24 +82,22 @@ const ImageSlider = () => {
   return (
     <div className="image-slider-container">
       <div className="image-slider">
-        <AnimatePresence>
-          {images.map((image, index) => (
-            <motion.div
-              key={`slideshow-${index}`}
-              className={`slider-image-container ${getClassName(index)}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: getClassName(index) !== "slider-hidden" ? 1 : 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <img
-                src={image.src || "/placeholder.svg"}
-                alt={`Photography by Diego Aloma - Slideshow ${index + 1}`}
-                className="slider-image"
-                loading={index < 5 ? "eager" : "lazy"}
-              />
-            </motion.div>
-          ))}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`slideshow-${currentIndex}`}
+            className="slider-image-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <img
+              src={images[currentIndex].src || "/placeholder.svg"}
+              alt={`Photography by Diego Aloma - Slideshow ${currentIndex + 1}`}
+              className="slider-image"
+              loading={currentIndex < 5 ? "eager" : "lazy"}
+            />
+          </motion.div>
         </AnimatePresence>
       </div>
     </div>

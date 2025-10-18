@@ -132,11 +132,6 @@
     gap: 2rem;
   }
 
-  .image-container {
-    max-width: 350px;
-    margin: 0 auto;
-  }
-
   .text-container {
     text-align: center;
   }
@@ -163,7 +158,14 @@
   .about-me-section {
     padding: 3rem 1.5rem;
   }
-
+  .about-content {
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+  }
+.image-container {
+    max-width: 50%;
+  }
   .section-title {
     font-size: 2rem;
   }
