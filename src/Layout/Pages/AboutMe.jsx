@@ -73,7 +73,7 @@ const AboutMe = () => {
             As a dedicated wedding photographer with over 6 years of experience, I specialize in transforming fleeting
             moments into everlasting memories. My journey in photography began as a passion for storytelling through
             visuals, evolving into a career that allows me to witness and document life's most precious celebrations.
-            Based in Barcelona but available worldwide, I blend documentary-style authenticity with fine art aesthetics
+            Based in New York, I blend documentary-style authenticity with fine art aesthetics
             to create images that feel both timeless and emotionally resonant.
           </p>
           <p className="paragraph">
