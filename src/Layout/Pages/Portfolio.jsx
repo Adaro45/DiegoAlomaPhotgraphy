@@ -23,7 +23,7 @@ const Portfolio = () => {
   const asideRef = useRef(null)
   const buttonRef = useRef(null)
 
-  const categories = ["All", "Wedding", "Portrait", "NewbornAndFamily"]
+  const categories = ["All", "Wedding", "Portrait", "NewbornAndFamily", "Maternity"]
 
   // Formateo para mostrar
   const formatCategoryName = (category) => {
@@ -36,10 +36,10 @@ const Portfolio = () => {
     let mounted = true
     const resolveAll = async () => {
       setIsLoading(true)
-
+      
       try {
         // galleryPhotos esperado como { Wedding: [...], Portrait: [...], NewbornAndFamily: [...] }
-        const types = ["Wedding", "Portrait", "NewbornAndFamily"]
+        const types = ["Wedding", "Portrait", "NewbornAndFamily", "Maternity"] // <-- añadir "Maternity" si lo tienes en el context
         const results = []
 
         for (const type of types) {
@@ -136,7 +136,7 @@ const Portfolio = () => {
         }
 
         // Ordenación por tipo para "All" (mantener Wedding, Portrait, NewbornAndFamily)
-        const orderMap = { Wedding: 1, Portrait: 2, NewbornAndFamily: 3 }
+        const orderMap = { Wedding: 1, Portrait: 2, NewbornAndFamily: 3, Maternity: 4 }
         results.sort((a, b) => (orderMap[a.type] || 99) - (orderMap[b.type] || 99))
 
         if (!mounted) return
@@ -153,7 +153,9 @@ const Portfolio = () => {
     // Si el context aún está cargando, esperaremos
     if (dataLoading) {
       setIsLoading(true)
+      return
     }
+    resolveAll()
 
     // Ejecutar resolución (no bloquear si dataLoading true; el effect volverá a dispararse)
     resolveAll()
@@ -195,20 +197,20 @@ const Portfolio = () => {
   const numColumns = isMobile ? 2 : 3
   const columns = numColumns === 1 ? [filteredImages] : getColumns(filteredImages, numColumns)
 
-  // Simulación de carga local para transiciones (mantengo tu UX)
-  useEffect(() => {
-    // Si el context está cargando, mantener loader
-    if (dataLoading) {
-      setIsLoading(true)
-      return
-    }
-    // Si las imágenes dinámicas aún se están resolviendo, isLoading será true
-    const timer = setTimeout(() => {
-      // solo quitar loading si ya resolvimos portfolioImages
-      setIsLoading(false)
-    }, 250)
-    return () => clearTimeout(timer)
-  }, [dataLoading, portfolioImages.length])
+  // // Simulación de carga local para transiciones (mantengo tu UX)
+  // useEffect(() => {
+  //   // Si el context está cargando, mantener loader
+  //   if (dataLoading) {
+  //     setIsLoading(true)
+  //     return
+  //   }
+  //   // Si las imágenes dinámicas aún se están resolviendo, isLoading será true
+  //   const timer = setTimeout(() => {
+  //     // solo quitar loading si ya resolvimos portfolioImages
+  //     setIsLoading(false)
+  //   }, 250)
+  //   return () => clearTimeout(timer)
+  // }, [dataLoading, portfolioImages.length])
 
   // ----- Sidebar / filtros -----
   const handleCategoryChange = (newCategory) => {

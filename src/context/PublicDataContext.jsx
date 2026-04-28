@@ -35,7 +35,8 @@ export const PublicDataProvider = ({ children }) => {
   const [galleryPhotos, setGalleryPhotos] = useState({
     Wedding: [],
     Portrait: [],
-    NewbornAndFamily: []
+    NewbornAndFamily: [],
+    Maternity: []
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -226,7 +227,8 @@ const loadSlideshowBySlug = useCallback(
       const photosByType = {
         Wedding: [],
         Portrait: [],
-        NewbornAndFamily: []
+        NewbornAndFamily: [],
+        Maternity: []
       }
 
       // Mapear y resolver URLs en paralelo
@@ -312,7 +314,7 @@ const loadSlideshowBySlug = useCallback(
       }
 
       setSlideshows(slideshowsData)
-      setGalleryPhotos(galleryResult.photos || { Wedding: [], Portrait: [], NewbornAndFamily: [] })
+      setGalleryPhotos(galleryResult.photos || { Wedding: [], Portrait: [], NewbornAndFamily: [],Maternity: [] })
 
       if (homePageResult.images?.length > 0) {
         await preloadImages(homePageResult.images, 5)
